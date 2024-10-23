@@ -1,0 +1,6 @@
+echo model: > config.yaml
+echo   type: "ARIMA" >> config.yaml
+echo   params: >> config.yaml
+echo     p: 1 >> config.yaml
+echo     d: 1 >> config.yaml
+echo     q: 1 >> config.yaml

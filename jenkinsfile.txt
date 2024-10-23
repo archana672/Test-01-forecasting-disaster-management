@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    environment {
+        PYTHON_ENV = 'venv' // Use a virtual environment
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from your repository
+                git url: 'https://your-repo-url.git', branch: 'main'
+            }
+        }
+
+        stage('Setup') {
+            steps {
+                // Set up Python environment
+                sh 'python -m venv $PYTHON_ENV'
+                sh '. $PYTHON_ENV/bin/activate'
+                // Install dependencies
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                // Run tests
+                sh '. $PYTHON_ENV/bin/activate && python -m unittest discover -s tests'
+            }
+        }
+
+        stage('Run Scripts') {
+            steps {
+                // Run the main scripts
+                sh '. $PYTHON_ENV/bin/activate && bash run_all.sh'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Archive the results
+            archiveArtifacts artifacts: 'outputs/**', fingerprint: true
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
